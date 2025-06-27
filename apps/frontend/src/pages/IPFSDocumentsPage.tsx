@@ -17,9 +17,9 @@ const documentTypes = [
 const getFileIcon = (fileName: string) => {
   const extension = fileName.split('.').pop()?.toLowerCase()
   
-  if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
+  if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension || '')) {
     return Image
-  } else if (['mp4', 'avi', 'mov', 'wmv'].includes(extension)) {
+  } else if (['mp4', 'avi', 'mov', 'wmv'].includes(extension || '')) {
     return Video
   } else {
     return FileText
@@ -52,7 +52,7 @@ export function IPFSDocumentsPage() {
   const [uploadType, setUploadType] = useState('receipt')
   const [uploadCampaign, setUploadCampaign] = useState('')
   const [isUploading, setIsUploading] = useState(false)
-  const [previewDocument, setPreviewDocument] = useState(null)
+  const [previewDocument, setPreviewDocument] = useState<any>(null)
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files
@@ -71,7 +71,7 @@ export function IPFSDocumentsPage() {
     
     try {
       for (const file of Array.from(files)) {
-        await uploadDocument(file, uploadType, uploadCampaign)
+        await uploadDocument(file, uploadType as any, uploadCampaign)
       }
       
       toast({

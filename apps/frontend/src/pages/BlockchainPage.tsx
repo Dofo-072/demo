@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { useWeb3Store } from '@/store/web3Store'
 import { useToast } from '@/hooks/use-toast'
 
-const networkInfo = {
+const networkInfo: Record<number, { name: string; explorer: string; color: string }> = {
   137: { name: 'Polygon Mainnet', explorer: 'https://polygonscan.com', color: 'text-purple-600' },
   80001: { name: 'Polygon Mumbai', explorer: 'https://mumbai.polygonscan.com', color: 'text-blue-600' },
   1: { name: 'Ethereum Mainnet', explorer: 'https://etherscan.io', color: 'text-blue-500' },
@@ -16,6 +16,14 @@ const contractAddresses = {
   donation: '0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b9',
   milestone: '0x8ba1f109551bD432803012645Hac136c0532925',
   audit: '0x9cb2g210662cE543914756Ibd247d0643036'
+}
+
+interface RecentBlock {
+  number: number
+  hash: string
+  timestamp: number
+  transactions: number
+  gasUsed: number
 }
 
 export function BlockchainPage() {
@@ -31,7 +39,7 @@ export function BlockchainPage() {
   } = useWeb3Store()
   
   const { toast } = useToast()
-  const [recentBlocks, setRecentBlocks] = useState([])
+  const [recentBlocks, setRecentBlocks] = useState<RecentBlock[]>([])
 
   const currentNetwork = chainId ? networkInfo[chainId] : null
 
@@ -63,7 +71,7 @@ export function BlockchainPage() {
 
   // Mock recent blocks data
   useEffect(() => {
-    const mockBlocks = Array.from({ length: 5 }, (_, i) => ({
+    const mockBlocks: RecentBlock[] = Array.from({ length: 5 }, (_, i) => ({
       number: 45678901 - i,
       hash: `0x${Math.random().toString(16).substring(2, 18)}...`,
       timestamp: Date.now() - (i * 15000),
@@ -145,7 +153,7 @@ export function BlockchainPage() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => copyToClipboard(account)}
+                      onClick={() => copyToClipboard(account || '')}
                     >
                       <Copy className="h-4 w-4" />
                     </Button>

@@ -59,16 +59,16 @@ export const useWeb3Store = create<Web3State>()(
       account: null,
       chainId: null,
       balance: '0',
-      donationContractAddress: process.env.VITE_DONATION_CONTRACT_ADDRESS || null,
-      milestoneContractAddress: process.env.VITE_MILESTONE_CONTRACT_ADDRESS || null,
-      auditContractAddress: process.env.VITE_AUDIT_CONTRACT_ADDRESS || null,
+      donationContractAddress: '0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b9',
+      milestoneContractAddress: '0x8ba1f109551bD432803012645Hac136c0532925',
+      auditContractAddress: '0x9cb2g210662cE543914756Ibd247d0643036',
       pendingTransactions: [],
       completedTransactions: [],
 
       // Initialize Web3 connection
       initializeWeb3: async () => {
         try {
-          if (typeof window.ethereum !== 'undefined') {
+          if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
             // Check if already connected
             const accounts = await window.ethereum.request({ 
               method: 'eth_accounts' 
@@ -114,7 +114,7 @@ export const useWeb3Store = create<Web3State>()(
       // Connect wallet
       connectWallet: async () => {
         try {
-          if (typeof window.ethereum === 'undefined') {
+          if (typeof window === 'undefined' || typeof window.ethereum === 'undefined') {
             throw new Error('MetaMask is not installed')
           }
 
@@ -167,9 +167,13 @@ export const useWeb3Store = create<Web3State>()(
           completedTransactions: [
             ...state.completedTransactions.filter(tx => tx.hash !== txHash),
             {
-              ...state.completedTransactions.find(tx => tx.hash === txHash),
+              hash: txHash,
+              from: state.account || '',
+              to: state.donationContractAddress || '',
+              value: '0',
+              timestamp: Date.now(),
               status,
-              hash: txHash
+              type: 'donation'
             } as Transaction
           ]
         }))
@@ -184,7 +188,7 @@ export const useWeb3Store = create<Web3State>()(
         }
 
         try {
-          const txHash = await window.ethereum.request({
+          const txHash = await window.ethereum!.request({
             method: 'eth_sendTransaction',
             params: [{
               from: account,
@@ -213,7 +217,7 @@ export const useWeb3Store = create<Web3State>()(
           // This would encode the milestone data for the smart contract
           const encodedData = `0x${campaignId}${milestoneData.title}`
           
-          const txHash = await window.ethereum.request({
+          const txHash = await window.ethereum!.request({
             method: 'eth_sendTransaction',
             params: [{
               from: account,
@@ -238,7 +242,7 @@ export const useWeb3Store = create<Web3State>()(
         }
 
         try {
-          const txHash = await window.ethereum.request({
+          const txHash = await window.ethereum!.request({
             method: 'eth_sendTransaction',
             params: [{
               from: account,

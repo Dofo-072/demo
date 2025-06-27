@@ -248,6 +248,7 @@ export function AuditPage() {
               <option value="pending">Pending</option>
             </select>
           </div>
+        
         </motion.div>
 
         {/* Audit Records */}

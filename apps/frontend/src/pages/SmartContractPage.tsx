@@ -5,7 +5,34 @@ import { Button } from '@/components/ui/button'
 import { useWeb3Store } from '@/store/web3Store'
 import { useToast } from '@/hooks/use-toast'
 
-const contractFunctions = [
+interface ContractFunction {
+  name: string
+  description: string
+  inputs: Array<{
+    name: string
+    type: string
+    description: string
+  }>
+  outputs: Array<{
+    name: string
+    type: string
+    description: string
+  }>
+  payable: boolean
+  gasEstimate: string
+}
+
+interface ContractEvent {
+  name: string
+  description: string
+  parameters: Array<{
+    name: string
+    type: string
+    indexed: boolean
+  }>
+}
+
+const contractFunctions: ContractFunction[] = [
   {
     name: 'donate',
     description: 'Make a donation to a specific campaign',
@@ -66,7 +93,7 @@ const contractFunctions = [
   }
 ]
 
-const contractEvents = [
+const contractEvents: ContractEvent[] = [
   {
     name: 'DonationReceived',
     description: 'Emitted when a donation is made',
@@ -111,8 +138,8 @@ const contractEvents = [
 export function SmartContractPage() {
   const { isConnected, account } = useWeb3Store()
   const { toast } = useToast()
-  const [selectedFunction, setSelectedFunction] = useState(null)
-  const [functionInputs, setFunctionInputs] = useState({})
+  const [selectedFunction, setSelectedFunction] = useState<string | null>(null)
+  const [functionInputs, setFunctionInputs] = useState<Record<string, Record<string, string>>>({})
   const [isExecuting, setIsExecuting] = useState(false)
 
   const handleInputChange = (functionName: string, inputName: string, value: string) => {
@@ -125,7 +152,7 @@ export function SmartContractPage() {
     }))
   }
 
-  const executeFunction = async (func) => {
+  const executeFunction = async (func: ContractFunction) => {
     if (!isConnected) {
       toast({
         title: 'Wallet Not Connected',

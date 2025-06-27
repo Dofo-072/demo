@@ -16,7 +16,7 @@ export interface IPFSDocument {
 
 export interface IPFSState {
   documents: IPFSDocument[]
-  uploadProgress: { [key: string]: number }
+  uploadProgress: { [key: string]: number | undefined }
   
   // Actions
   uploadDocument: (file: File, type: IPFSDocument['type'], campaignId: string) => Promise<string>
@@ -29,7 +29,30 @@ export interface IPFSState {
 export const useIPFSStore = create<IPFSState>()(
   persist(
     (set, get) => ({
-      documents: [],
+      documents: [
+        {
+          hash: 'QmXoW8s...Y4Z',
+          name: 'school_books_receipt.pdf',
+          type: 'receipt',
+          campaignId: '1',
+          uploadedBy: 'charity-org-1',
+          uploadedAt: Date.now() - 86400000,
+          size: 245760,
+          verified: true,
+          verifiedBy: 'auditor-1',
+          verifiedAt: Date.now() - 43200000
+        },
+        {
+          hash: 'QmYp9X...A5B',
+          name: 'milestone_report_q1.pdf',
+          type: 'milestone',
+          campaignId: '2',
+          uploadedBy: 'charity-org-2',
+          uploadedAt: Date.now() - 172800000,
+          size: 512000,
+          verified: false
+        }
+      ],
       uploadProgress: {},
 
       uploadDocument: async (file: File, type: IPFSDocument['type'], campaignId: string) => {
